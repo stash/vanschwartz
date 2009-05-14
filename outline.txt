@@ -1,0 +1,63 @@
+
+^ TheSchwartz and Parallel::ForkManager
+
+^ What is Parallel::ForkManager
+
+^ What makes pre-forking awesome
+* less memory for similar processes
+* load once, run many
+* process isolation in lieu of bugs
+** easier & less error prone than threading
+* linux processes/tasks/threads
+
+^ What's not so awesome
+* handling things cross-platform -- P::FM helps this
+
+^ What is TheSchwartz
+
+* Made by folks at danga/sixapart (Brad Fitzpatric).
+** of LiveJournal, memcached, perlbal and OpenID fame
+* An asynchronous, reliable, distributed job queue.
+** "set it and forget it"
+* High Availability
+** uses @servers.
+
+^ What makes the schwartz awesome
+* no server, uses the mature DBI
+** most DBI-supported DBs
+* asynchronous, UNIX-y, lots of simple tasks strung together
+* grab, don't lock
+* retry, don't forget
+* batch processing (coalescing)
+* distributed, if you want to
+** don't need remoting? use SQLite
+* queue priority
+
+^ What's not 
+* Data::ObjectDriver is complicated magic
+** but, gives you server flexibility
+** alternatives:
+*** use TheSchwartz::Moosified, supports SQLite and Pg (and mysql, sorta)
+*** TheSchwartz::Simple; a light "post-a-job" client.
+* the queue priority system can starve low-priority jobs
+
+^ Similar tech
+
+* IPC::DirQueue
+** use a filesystem dir
+** good, non-distributed choice
+
+* Gearman - http://www.danga.com/gearman/
+** a "function call router"; synchronous remote workers
+** works well with TheSchwartz; very similar API
+
+^ What can you all this for
+
+^ Evil:
+* distributed farm of HTTP fetchers, centralized processing
+* bypassing twitter API limits
+
+^ Good:
+* Asynchronous jobs in $WEBAPP
+** Expand one event (e.g. a new post) into tons of things (e.g. e-mails, RSS updates, webhooks)
+
