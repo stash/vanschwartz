@@ -1,1 +1,14 @@
-dir for stuff at van.pm
+In this set of examples, you can see the progression from a single-threaded twitter poller to a pre-forked, distributed twitter engine of sorts.
+
+The modules of interest being used:
+* Net::Twitter
+* TheSchwartz::Moosified
+* Parallel::ForkManager
+
+ex1: a simple Net::Twitter poller, plain and simple
+
+ex2: polling is scheduled with TheSchwartz
+
+ex3: processing of poll results is done with Acme::LOLCAT
+
+ex4: pre-forked pollers (Parallel::ForkManager)
