@@ -13,11 +13,22 @@ sub work {
     my $job = shift;
     my ($data,$last_id) = get_friends($job->arg);
 
-    my $for_processing = TheSchwartz::Moosified::Job->new(
-        funcname => 'LOLifier',
-        arg => { data => $data },
+    my @next;
+    if ($data) {
+        push @next, TheSchwartz::Moosified::Job->new(
+            funcname => 'LOLifier',
+            coalesce => "statuses-$last_id",
+            arg => { data => $data },
+        );
+    }
+    push @next, TheSchwartz::Moosified::Job->new(
+        funcname => 'Fetcher',
+        arg => { %{$job->arg}, since_id => $last_id },
+        run_after => time+30,
     );
-    $job->replace_with($for_processing); # calls ->completed
+
+    # note: two jobs!
+    $job->replace_with(@next);
 }
 
 sub get_friends {
@@ -30,8 +41,12 @@ sub get_friends {
 
     my $statuses = $twit->friends_timeline($arg);
     print "Got ".@$statuses." statuses\n";
+    if (!@$statuses) {
+        return (undef, $arg->{since_id});
+    }
 
-    my \@data = map {
+    print "$_->{id}: $_->{user}{screen_name} $_->{text}\n" for @$statuses;
+    my @data = map {
         +{ id=>$_->{id}, text=>$_->{text}, who=>$_->{user}{screen_name} } 
     } @$statuses;
 
