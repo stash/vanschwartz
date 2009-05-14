@@ -15,16 +15,9 @@ sub work {
 
     my $for_processing = TheSchwartz::Moosified::Job->new(
         funcname => 'LOLifier',
-        coalesce => "statuses-$last_id",
         arg => { data => $data },
     );
-#     my $next_time = TheSchwartz::Moosified::Job->new(
-#         funcname => 'Fetcher',
-#         arg => { %{$job->arg}, since_id => $last_id }
-#     );
-
-#     $job->replace_with($for_processing, $next_time);
-    $job->replace_with($for_processing);
+    $job->replace_with($for_processing); # calls ->completed
 }
 
 sub get_friends {
@@ -36,10 +29,10 @@ sub get_friends {
     );
 
     my $statuses = $twit->friends_timeline($arg);
-    print "$_->{id}: $_->{user}{screen_name} $_->{text}\n" for @$statuses;
+    print "Got ".@$statuses." statuses\n";
 
     my $data = map {
-        +{ text => $_->{text}, who => $_->{user}{screen_name} } 
+        +{ id=>$_->{id}, text=>$_->{text}, who=>$_->{user}{screen_name} } 
     } @$statuses;
 
     my $last_id = max map { $_->{id} } @$statuses;
