@@ -3,14 +3,13 @@ use warnings;
 use strict;
 
 use Net::Twitter;
-use MIME::Base64;
 use Data::Dumper;
+use JSON::XS;
 
-my $twit = Net::Twitter->new(
-    username => 'jstash',
-    password => decode_base64('dHcxdHBhc3M='),
-);
+my $creds = decode_json(do { local (@ARGV,$/) = '.creds'; <> });
 
-my $statuses = $twit->friends_timeline({limit => 20});
+my $twit = Net::Twitter->new(%$creds);
+
+my $statuses = $twit->friends_timeline();
 warn Dumper $statuses;
 warn Dumper $twit->rate_limit_status();

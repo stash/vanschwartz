@@ -2,8 +2,7 @@ package Fetcher;
 use Moose;
 use MySchwartz;
 use Net::Twitter;
-use MIME::Base64;
-use Data::Dumper;
+use JSON::XS;
 use List::Util qw(max);
 
 extends 'TheSchwartz::Moosified::Worker';
@@ -23,15 +22,13 @@ sub work {
 sub get_friends {
     my $arg = shift;
 
-    my $twit = Net::Twitter->new(
-        username => 'jstash',
-        password => decode_base64('dHcxdHBhc3M='),
-    );
+    my $creds = decode_json(do { local (@ARGV,$/) = '.creds'; <> });
+    my $twit = Net::Twitter->new(%$creds);
 
     my $statuses = $twit->friends_timeline($arg);
     print "Got ".@$statuses." statuses\n";
 
-    my \@data = map {
+    my @data = map {
         +{ id=>$_->{id}, text=>$_->{text}, who=>$_->{user}{screen_name} } 
     } @$statuses;
 

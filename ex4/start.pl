@@ -6,5 +6,9 @@ use lib 'ex4';
 use MySchwartz;
 
 my $client = MySchwartz->new;
-my $jobh = $client->insert(Fetcher => {});
-print "Added job ".$jobh->jobid."\n";
+
+for (1..4) {
+    my $jobh = $client->insert(Fetcher => {});
+    print "Added job ".$jobh->jobid."\n";
+    sleep 3;
+}
