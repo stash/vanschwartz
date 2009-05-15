@@ -7,12 +7,12 @@ extends 'TheSchwartz::Moosified';
 has '+databases' => ( default => \&connect );
 has '+verbose' => ( default => sub { \&log_with_pid } );
 
-our $dsn = "dbi:Pg:database=vanpm";
+our $dsn = "dbi:Pg:database=vanpm;hostaddr=192.168.1.232;port=5432";
 our $DBH;
 
 sub connect {
     return [$DBH] if $DBH;
-    my $dbh = DBI->connect($dsn, $ENV{USER}, "",  {
+    my $dbh = DBI->connect($dsn, "stash", "postgres",  {
         AutoCommit => 1,
         pg_enable_utf8 => 1,
         PrintError => 0,
